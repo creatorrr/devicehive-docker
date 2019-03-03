@@ -33,12 +33,17 @@ spec:
         - name: DH_WS_PROXY
           value: "{{ .Release.Name }}-devicehive-ws-proxy-internal:3000"
         {{- end }}
+        {{- if eq .Values.postgresql.location "off-cluster" }}
+        - name: DH_POSTGRES_ADDRESS
+          value: "{{ .Values.postgresql.host }}"
+        {{- else }}
         - name: DH_POSTGRES_ADDRESS
           value: "{{ .Release.Name }}-postgresql"
+        {{- end }}
         - name: DH_POSTGRES_DB
           value: "{{ .Values.postgresql.postgresDatabase }}"
         - name: DH_POSTGRES_PORT
-          value: "5432"
+          value: {{ .Values.postgresql.port | default "5432" | quote }}
         - name: DH_POSTGRES_USERNAME
           value: "{{ .Values.postgresql.postgresUser }}"
         - name: DH_POSTGRES_PASSWORD
